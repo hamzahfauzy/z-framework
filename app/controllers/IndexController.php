@@ -15,6 +15,11 @@ class IndexController extends Controller
 		return $this->view->render("index");
 	}
 
+	function hello()
+	{
+		echo "Hello World";
+	}
+
 	function logout()
 	{
 		Session::destroy();

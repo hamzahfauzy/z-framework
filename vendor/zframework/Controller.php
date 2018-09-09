@@ -10,7 +10,7 @@ class Controller
 	function __construct()
 	{
 		$this->view = new View();
-		$this->base_url = "http://".$_SERVER['HTTP_HOST'];
+		$this->base_url = base_url();
 		$this->view->base_url = $this->base_url;
 	}
 

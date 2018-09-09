@@ -5,6 +5,6 @@ class Assets
 {
 	public static function get($src)
 	{
-		return "http://".$_SERVER['HTTP_HOST']."/".$src;
+		return base_url()."/".$src;
 	}
 }
