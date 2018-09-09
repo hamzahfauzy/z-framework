@@ -1,13 +1,11 @@
 <?php
 use vendor\zframework\Route;
 
-Route::get("/","Hello@index");
-Route::prefix("/hello")->group(function(){
-	Route::get("/","Hello@index");
-	Route::get("/index","Hello@index");
-	Route::get("/world","Hello@add");
-});
+Route::get("/","IndexController@index");
+Route::get("/login","IndexController@login");
+Route::get("/register","IndexController@register");
+Route::get("/logout","IndexController@logout");
 
-Route::prefix("/admin")->group(function(){
-	Route::get("/","Admin@index");
+Route::prefix("/admin")->middleware("Admin")->namespace("Admin")->group(function(){
+	Route::get("/","IndexController@index");
 });
