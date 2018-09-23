@@ -29,7 +29,10 @@ class Route
 
 	public static function group($callback)
 	{
-		return call_user_func($callback);
+		call_user_func($callback);
+		self::$_middleware = "";
+		self::$_namespace = "";
+		return;
 	}
 
 	public static function get($url,$controller,$param=false)

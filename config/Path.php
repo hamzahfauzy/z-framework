@@ -1,3 +1,3 @@
 <?php
 
-define("path_name","me-framework");
+define("path_name","");
