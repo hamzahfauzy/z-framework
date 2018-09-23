@@ -15,6 +15,11 @@ class Route
 		return new static;
 	}
 
+	public static function returnGet()
+	{
+		return self::$_get;
+	}
+
 	public static function namespace($name)
 	{
 		self::$_namespace = $name."\\";
@@ -32,6 +37,7 @@ class Route
 		call_user_func($callback);
 		self::$_middleware = "";
 		self::$_namespace = "";
+		self::$base_prefix = "";
 		return;
 	}
 
