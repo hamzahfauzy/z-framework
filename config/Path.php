@@ -1,3 +1,3 @@
 <?php
 
-define("path_name","z-framework");
+define("path_name","");
