@@ -41,7 +41,7 @@ class Route
 		return;
 	}
 
-	public static function get($url,$controller,$param=false)
+	public static function get($url,$controller)
 	{
 
 		if(!empty(self::$base_prefix))
@@ -52,7 +52,6 @@ class Route
 		$key = count(self::$_get);
 		self::$_get[$key]["url"] = $url;
 		self::$_get[$key]["controller"] = self::$_namespace.$controller;
-		self::$_get[$key]["param"] = $param;
 		self::$_get[$key]["middleware"] = self::$_middleware;
 	}
 
@@ -79,20 +78,8 @@ class Route
 				$return->middleware = $value["middleware"];
 				if(!empty($params))
 					$return->param = $params;
-				// if($value["param"])
-				// 	$return->param = $value["param"];
 				break;
 		    }
-			// if($value['url'] == $uri){
-			// 	$arr = explode("@", $value["controller"]);
-			// 	$arr[0] = "app\\controllers\\".$arr[0];
-			// 	$return->className = $arr[0];
-			// 	$return->method = $arr[1];
-			// 	$return->middleware = $value["middleware"];
-			// 	if($value["param"])
-			// 		$return->param = $value["param"];
-			// 	break;
-			// }
 		}
 		return $return;
 	}
