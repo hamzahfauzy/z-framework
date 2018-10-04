@@ -47,6 +47,8 @@ class Route
 		if(!empty(self::$base_prefix))
 			$url = self::$base_prefix . $url;
 		if($url != "/") $url = rtrim($url,"/");
+		$url = str_replace("{","(?'",$url);
+		$url = str_replace("}","'[^/]+)",$url);
 		$key = count(self::$_get);
 		self::$_get[$key]["url"] = $url;
 		self::$_get[$key]["controller"] = self::$_namespace.$controller;
@@ -69,16 +71,28 @@ class Route
 	{
 		$return = new \stdClass();
 		foreach (self::$_get as $key => $value) {
-			if($value['url'] == $uri){
-				$arr = explode("@", $value["controller"]);
+			if ( preg_match( '~^'.$value['url'].'$~i', $uri, $params ) ) {
+		        $arr = explode("@", $value["controller"]);
 				$arr[0] = "app\\controllers\\".$arr[0];
 				$return->className = $arr[0];
 				$return->method = $arr[1];
 				$return->middleware = $value["middleware"];
-				if($value["param"])
-					$return->param = $value["param"];
+				if(!empty($params))
+					$return->param = $params;
+				// if($value["param"])
+				// 	$return->param = $value["param"];
 				break;
-			}
+		    }
+			// if($value['url'] == $uri){
+			// 	$arr = explode("@", $value["controller"]);
+			// 	$arr[0] = "app\\controllers\\".$arr[0];
+			// 	$return->className = $arr[0];
+			// 	$return->method = $arr[1];
+			// 	$return->middleware = $value["middleware"];
+			// 	if($value["param"])
+			// 		$return->param = $value["param"];
+			// 	break;
+			// }
 		}
 		return $return;
 	}
