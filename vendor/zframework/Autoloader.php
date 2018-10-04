@@ -68,14 +68,14 @@ class Autoloader
 							}
 						}
 					}
-					
-					call_user_func_array(array(new $Route->className, $Route->method), $param);
-					
 					if(!empty($output))
 					{
 						echo $output;
 						$error = false;
-					}
+					}else
+						call_user_func_array(array(new $Route->className, $Route->method), $param);
+					
+					
 				}else
 					$class->{$Route->method}(false);
 				$error = false;
