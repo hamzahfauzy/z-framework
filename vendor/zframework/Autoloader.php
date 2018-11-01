@@ -36,33 +36,45 @@ class Autoloader
 				$class = new $Route->className;
 				if(!empty($Route->param))
 				{
+					foreach ($Route->param as $key => $value) {
+						if (is_int($key)) {
+							unset($Route->param[$key]);
+						}
+					}
+
+					$r = new \ReflectionMethod($Route->className, $Route->method);
+					$params = $r->getParameters();
+					foreach ($params as $key => $value) {
+						$_param[$value->name]["name"] = $value->name;
+						$_param[$value->name]["type"] = $value->getType();
+					}
+									
 					$output = "";
 					foreach ($Route->param as $k => $val) {
-						if(!isset($_GET[$val]))
-							$output .= "Parameter ".$val." Doesn't Exists<br>";
+						if(!isset($_param[$k]))
+							$output .= "Parameter ".$k." Doesn't Exists<br>";
 						else
-							$param[$val] = $_GET[$val];
+						{
+							if(strcmp($_param[$k]["type"],"app\\") > -1)
+							{
+								$type = $_param[$k]["type"];
+								$type = str_replace("\\", "/", $type);
+								$type = str_replace("/", "\\", $type);
+								$obj = new $type;
+								$obj = $obj->findParam($k, $val, $type);
+								$param[$k] = $obj;
+							}else{
+								$param[$k] = $val;
+							}
+						}
 					}
+					
+					call_user_func_array(array(new $Route->className, $Route->method), $param);
+					
 					if(!empty($output))
 					{
 						echo $output;
 						$error = false;
-					}else{
-						$r = new \ReflectionMethod($Route->className, $Route->method);
-						$params = $r->getParameters();
-						foreach ($params as $key => $value) {
-							$type = $value->getType();
-							if(strcmp($type,"app\\") > -1)
-							{
-								$type = str_replace("\\", "/", $type);
-								$type = str_replace("/", "\\", $type);
-								$obj = new $type;
-								$obj = $obj->findParam($value->getName(), $_GET[$value->getName()],$type);
-								$param[$value->getName()] = $obj;
-							}
-
-						}
-						call_user_func_array(array(new $Route->className, $Route->method), $param);
 					}
 				}else
 					$class->{$Route->method}(false);

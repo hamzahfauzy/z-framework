@@ -1,4 +1,4 @@
 <?php
 
 define("path_name","z-framework");
-define("main_name","main");
+define("main_name","main");=
