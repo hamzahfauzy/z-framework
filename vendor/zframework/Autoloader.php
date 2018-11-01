@@ -33,6 +33,7 @@ class Autoloader
 					$middleware = "app\\middleware\\".$Route->middleware;
 					new $middleware;
 				}
+				$param = [];
 				$class = new $Route->className;
 				if(!empty($Route->param))
 				{
