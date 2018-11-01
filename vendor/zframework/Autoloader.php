@@ -21,7 +21,7 @@ class Autoloader
 		);
 
 		if(!empty(path_name) || path_name != false)
-			$uri = str_replace("/".path_name."/main", "", $uri);
+			$uri = str_replace("/".path_name."/".main_name, "", $uri);
 
 		$error = true;
 

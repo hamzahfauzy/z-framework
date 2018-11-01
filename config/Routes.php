@@ -8,6 +8,7 @@ Route::prefix("/admin")->middleware("Admin")->namespace("Admin")->group(function
 });
 
 Route::get("/hello","IndexController@hello");
+Route::post("/posthandle","IndexController@posthandle");
 Route::get("/login","IndexController@login");
 Route::get("/register","IndexController@register");
 Route::get("/logout","IndexController@logout");
