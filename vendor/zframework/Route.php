@@ -20,7 +20,7 @@ class Route
 		return self::$_get;
 	}
 
-	public static function namespace($name)
+	public static function namespaces($name)
 	{
 		self::$_namespace = $name."\\";
 		return new static;

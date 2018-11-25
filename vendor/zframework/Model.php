@@ -8,6 +8,7 @@ class Model
 	public static $_fields;
 	public static $QueryBuilder;
 	public static $where_clause = [];
+	public static $or_where_clause = [];
 
 	function __construct()
 	{
@@ -37,12 +38,37 @@ class Model
 	{
 		self::init();
 		self::$QueryBuilder->select(self::$_tbl);
+// 		print_r(self::$where_clause);
 		if(count(self::$where_clause))
 		{
 			foreach (self::$where_clause as $key => $value) {
-				self::$QueryBuilder->where($key,$value);
+			    
+				if(is_array($value))
+			    {
+			        self::$QueryBuilder->where($key,$value[0],$value[1]);
+			    }
+			    else
+			    {
+			        self::$QueryBuilder->where($key,$value);
+			    }
 			}
 		}
+		if(count(self::$or_where_clause))
+		{
+			foreach (self::$or_where_clause as $key => $value) {
+			    
+				if(is_array($value))
+			    {
+			        self::$QueryBuilder->orwhere($key,$value[0],$value[1]);
+			    }
+			    else
+			    {
+			        self::$QueryBuilder->orwhere($key,$value);
+			    }
+			}
+		}
+		self::$where_clause = [];
+		self::$or_where_clause = [];
 		return self::$QueryBuilder->run();
 	}
 
@@ -53,14 +79,38 @@ class Model
 		if(count(self::$where_clause))
 		{
 			foreach (self::$where_clause as $key => $value) {
-				self::$QueryBuilder->where($key,$value);
+			    if(is_array($value))
+			    {
+			        self::$QueryBuilder->where($key,$value[0],$value[1]);
+			    }
+			    else
+			    {
+			        self::$QueryBuilder->where($key,$value);
+			    }
+				
 			}
 		}
+		if(count(self::$or_where_clause))
+		{
+			foreach (self::$or_where_clause as $key => $value) {
+			    
+				if(is_array($value))
+			    {
+			        self::$QueryBuilder->orwhere($key,$value[0],$value[1]);
+			    }
+			    else
+			    {
+			        self::$QueryBuilder->orwhere($key,$value);
+			    }
+			}
+		}
+		self::$where_clause = [];
 		return self::$QueryBuilder->run(1);
 	}
 
 	public static function last_id()
 	{
+	    print_r(self::$QueryBuilder);
 		return self::$QueryBuilder->last_id;
 	}
 
@@ -71,10 +121,21 @@ class Model
 		return self::$QueryBuilder->select(self::$_tbl)->where($PrimaryKey,$id)->run(1);
 	}
 
-	public static function where($clause1, $clause2)
+	public static function where($clause1, $clause2, $clause3 = false)
 	{
-		// self::init();
-		self::$where_clause[$clause1] = $clause2;
+	   // self::init();
+		self::$where_clause[$clause1] = $clause3==false ? $clause2 : [$clause2, $clause3];
+		
+		// if(!self::$QueryBuilder->is_select)
+		// 	self::$QueryBuilder->select(self::$_tbl);
+		// self::$QueryBuilder->where($clause1, $clause2);
+		return new static;
+	}
+	
+	public static function orwhere($clause1, $clause2, $clause3 = false)
+	{
+	   // self::init();
+		self::$or_where_clause[$clause1] = $clause3==false ? $clause2 : [$clause2, $clause3];
 		
 		// if(!self::$QueryBuilder->is_select)
 		// 	self::$QueryBuilder->select(self::$_tbl);
@@ -91,6 +152,7 @@ class Model
 
 	public function save($param=false)
 	{
+	    self::init();
 		if($param == false)
 		{
 			$param = [];

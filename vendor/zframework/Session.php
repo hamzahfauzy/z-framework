@@ -4,7 +4,7 @@ namespace vendor\zframework;
 class Session 
 {
 	static $usersclass = "app\User";
-	static $user_session_key = "userid";
+	static $user_session_key = "id";
 
 	public static function init()
 	{
