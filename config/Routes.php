@@ -3,7 +3,7 @@ use vendor\zframework\Route;
 
 Route::get("/","IndexController@index");
 
-Route::prefix("/admin")->middleware("Admin")->namespace("Admin")->group(function(){
+Route::prefix("/admin")->middleware("Admin")->namespaces("Admin")->group(function(){
 	Route::get("/","IndexController@index");
 });
 
