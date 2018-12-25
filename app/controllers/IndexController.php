@@ -27,9 +27,10 @@ class IndexController extends Controller
 		echo "Hello World";
 	}
 
-	function user(User $id)
+	function user($id)
 	{
-		print_r($id);
+		$user = User::where("id",$id)->first();
+		return $this->view->render("detail")->with("user",$user);
 	}
 
 	function tryparam($param)

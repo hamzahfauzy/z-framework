@@ -21,7 +21,7 @@ class Autoloader
 		);
 
 		if(!empty(path_name) || path_name != false)
-			$uri = str_replace("/".path_name."/main", "", $uri);
+			$uri = str_replace("/".path_name."/".main_name, "", $uri);
 
 		$error = true;
 
@@ -33,6 +33,7 @@ class Autoloader
 					$middleware = "app\\middleware\\".$Route->middleware;
 					new $middleware;
 				}
+				$param = [];
 				$class = new $Route->className;
 				if(!empty($Route->param))
 				{
@@ -68,14 +69,14 @@ class Autoloader
 							}
 						}
 					}
+					
+					call_user_func_array(array(new $Route->className, $Route->method), $param);
+					
 					if(!empty($output))
 					{
 						echo $output;
 						$error = false;
-					}else
-						call_user_func_array(array(new $Route->className, $Route->method), $param);
-					
-					
+					}
 				}else
 					$class->{$Route->method}(false);
 				$error = false;

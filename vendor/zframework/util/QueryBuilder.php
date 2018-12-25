@@ -33,6 +33,9 @@ class QueryBuilder
 		$index = 0;
 		$count = count($set);
 		foreach ($set as $key => $value) {
+		    if($value == "NULL" || $value == "CURRENT_TIMESTAMP")
+    			$_set .= $key."=".$value;
+    		else
 			$_set .= $key."='".$value."'";
 			if($index < $count-1)
 				$_set .= ", ";
@@ -50,7 +53,10 @@ class QueryBuilder
 		$count = count($set);
 		foreach ($set as $key => $value) {
 			$fields .= $key;
-			$values .= "'".$value."'";
+			if($value == "NULL" || $value == "CURRENT_TIMESTAMP")
+    			$values .= $value;
+    		else
+    		    $values .= "'".$value."'";
 			if($index < $count-1)
 			{
 				$fields .= ",";
@@ -70,7 +76,7 @@ class QueryBuilder
 		return $this;
 	}
 
-	function where($clause1, $clause2)
+	function where($clause1, $clause2, $clause3 = false)
 	{
 		if(!$this->is_where)
 		{
@@ -81,18 +87,43 @@ class QueryBuilder
 		{
 			$this->sql .= " AND ";
 		}
-		$this->sql .= " $clause1='$clause2'";
+		if($clause3 == false)
+		    $this->sql .= " $clause1='$clause2'";
+    	else
+    	{
+    	    $this->sql .= " $clause1 $clause2 '$clause3'";
+    	}
+    	
 		return $this;
 	}
 
-	function orwhere($clause1, $clause2)
+	function orwhere($clause1, $clause2, $clause3 = false)
 	{
-		$this->sql .= " OR $clause1='$clause2'";
+	    if($clause3 == false)
+    		$this->sql .= " OR $clause1='$clause2'";
+    	else
+    	    $this->sql .= " OR $clause1 $clause2 '$clause3'";
+    	    
+		return $this;
+	}
+	
+	function orderby($value)
+	{
+	    
+    	$this->sql .= " ORDER BY $value";
+		return $this;
+	}
+	
+	function setlimit($value)
+	{
+	    
+    	$this->sql .= " LIMIT $value";
 		return $this;
 	}
 
 	function run($type = false)
 	{
+	   // echo $this->sql;
 		if($this->is_select)
 		{
 			$rows = $this->connection->query($this->sql);
@@ -109,8 +140,11 @@ class QueryBuilder
 				return $return;
 			}
 		}
-		$this->connection->query($this->sql);
-		$this->last_id = $this->is_insert ? $this->connection->insert_id : 0;
-		return;
+		if(!empty($this->sql))
+		{
+			$this->connection->query($this->sql);
+			$this->last_id = $this->is_insert ? $this->connection->insert_id : 0;
+			return $this->last_id == 0 ? true : $this->last_id; //$this->connection;
+		}
 	}
 }
