@@ -29,8 +29,8 @@ class IndexController extends Controller
 
 	function user($id)
 	{
-		$user = User::where("id",$id)->first();
-		return $this->view->render("detail")->with("user",$user);
+		$user = User::get();
+		return $this->view->render("detail")->with("users",$user);
 	}
 
 	function tryparam($param)

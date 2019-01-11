@@ -11,7 +11,6 @@ class User extends Model
 
 	function getUserMeta()
 	{
-		// return 1;
 		return $this->hasOne(UserMeta::class, ["user_id"=>"id"]);
 	}
 

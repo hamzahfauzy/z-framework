@@ -1,3 +1,4 @@
+<?php foreach($users as $user): ?>
 <h2>Detail <?= $user->username ?></h2>
 
 Nama Lengkap : <?= $user->getUserMeta()->nama_lengkap ?> <br>
@@ -10,4 +11,6 @@ Jenis Kelamin : <?= $user->getUserMeta()->jenis_kelamin ?> <br>
 <h3><?= $value->post_title ?></h3>
 <p><?= $value->post_content ?></p>
 <br>
+<?php endforeach ?>
+
 <?php endforeach ?>

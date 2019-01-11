@@ -34,51 +34,75 @@ class Autoloader
 					new $middleware;
 				}
 				$param = [];
-				$class = new $Route->className;
-				if(!empty($Route->param))
-				{
-					foreach ($Route->param as $key => $value) {
-						if (is_int($key)) {
-							unset($Route->param[$key]);
-						}
-					}
-
-					$r = new \ReflectionMethod($Route->className, $Route->method);
-					$params = $r->getParameters();
-					foreach ($params as $key => $value) {
-						$_param[$value->name]["name"] = $value->name;
-						$_param[$value->name]["type"] = $value->getType();
-					}
-									
-					$output = "";
-					foreach ($Route->param as $k => $val) {
-						if(!isset($_param[$k]))
-							$output .= "Parameter ".$k." Doesn't Exists<br>";
-						else
-						{
-							if(strcmp($_param[$k]["type"],"app\\") > -1)
-							{
-								$type = $_param[$k]["type"];
-								$type = str_replace("\\", "/", $type);
-								$type = str_replace("/", "\\", $type);
-								$obj = new $type;
-								$obj = $obj->findParam($k, $val, $type);
-								$param[$k] = $obj;
-							}else{
-								$param[$k] = $val;
+				if(isset($Route->className)):
+					$class = new $Route->className;
+					if(!empty($Route->param))
+					{
+						foreach ($Route->param as $key => $value) {
+							if (is_int($key)) {
+								unset($Route->param[$key]);
 							}
 						}
-					}
-					
-					call_user_func_array(array(new $Route->className, $Route->method), $param);
-					
-					if(!empty($output))
+
+						$r = new \ReflectionMethod($Route->className, $Route->method);
+						$params = $r->getParameters();
+						foreach ($params as $key => $value) {
+							$_param[$value->name]["name"] = $value->name;
+							$_param[$value->name]["type"] = $value->getType();
+						}
+										
+						$output = "";
+						foreach ($Route->param as $k => $val) {
+							if(!isset($_param[$k]))
+								$output .= "Parameter ".$k." Doesn't Exists<br>";
+							else
+							{
+								if(strcmp($_param[$k]["type"],"app\\") > -1)
+								{
+									$type = $_param[$k]["type"];
+									$type = str_replace("\\", "/", $type);
+									$type = str_replace("/", "\\", $type);
+									$obj = new $type;
+									$obj = $obj->findParam($k, $val, $type);
+									$param[$k] = $obj;
+								}else{
+									$param[$k] = $val;
+								}
+							}
+						}
+						
+						call_user_func_array(array(new $Route->className, $Route->method), $param);
+						
+						if(!empty($output))
+						{
+							echo $output;
+							$error = false;
+						}
+					}else
+						$class->{$Route->method}(false);
+				else:
+					if(!empty($Route->param))
 					{
-						echo $output;
-						$error = false;
-					}
-				}else
-					$class->{$Route->method}(false);
+						foreach ($Route->param as $key => $value) {
+							if (is_int($key)) {
+								unset($Route->param[$key]);
+							}
+						}
+
+						foreach ($Route->param as $k => $val) {
+							$param[$k] = $val;
+						}
+						
+						call_user_func_array($Route->callback, $param);
+						
+						if(!empty($output))
+						{
+							echo $output;
+							$error = false;
+						}
+					}else
+						$class->{$Route->method}(false);
+				endif;
 				$error = false;
 			endif;
 		elseif($_SERVER['REQUEST_METHOD'] == "POST"):
