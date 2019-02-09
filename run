@@ -1,5 +1,6 @@
 <?php 
-
+require "config/Connection.php";
+use config\Connection;
 // z framework development started
 // z framework set default port
 $port = "8080";
@@ -14,6 +15,44 @@ if($num_of_arg > 1)
 	if(empty($_port)) exit;
 	if($_port[0] == "--port")
 		$port = $_port[1];
+	if($_port[0] == "migration")
+	{
+		$connection = new Connection();
+		$mysql = new mysqli($connection->host,$connection->username,$connection->password,$connection->database);
+		$tables = "SHOW tables FROM ".$connection->database;
+		$tables = $mysql->query($tables);
+		$tables = $tables->fetch_all(MYSQLI_ASSOC);
+		foreach ($tables as $key => $value) {
+			$tableName = $value['Tables_in_'.$connection->database];
+			$backup_file = "migrations/".$tableName.".json";
+			if($_port[1] == "create_table"){
+			}elseif($_port[1] == "export"){
+				$query = "SELECT * FROM $tableName";
+				$query = $mysql->query($query);
+				$data = json_encode($query->fetch_all(MYSQLI_ASSOC));
+				file_put_contents($backup_file, $data);
+			}elseif($_port[1] == "import"){
+				if(file_exists($backup_file))
+				{
+					$data = file_get_contents($backup_file);
+					$data = json_decode($data);
+					foreach ($data as $rows) {
+						$set = "";
+						$values = "";
+						foreach ($rows as $k => $row) {
+							$set .= $k.",";
+							$values .= "'".$row."',";
+						}
+						$set = rtrim($set,",");
+						$values = rtrim($values,",");
+						$insert = "INSERT INTO $tableName ($set) VALUES ($values)";
+						$mysql->query($insert);
+					}
+				}
+			}
+		}
+		die();
+	}
 }
 echo "Z-Framework Development Started at $port\n";
 $cmd = "php -S localhost:".$port." -t main/";
