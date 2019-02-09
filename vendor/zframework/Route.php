@@ -51,7 +51,7 @@ class Route
 		$url = str_replace("}","'[^/]+)",$url);
 		$key = count(self::$_get);
 		self::$_get[$key]["url"] = $url;
-		self::$_get[$key]["controller"] = self::$_namespace.$controller;
+		self::$_get[$key]["controller"] = is_string($controller) ? self::$_namespace.$controller : $controller;
 		self::$_get[$key]["middleware"] = self::$_middleware;
 	}
 
@@ -62,7 +62,7 @@ class Route
 		if($url != "/") $url = rtrim($url,"/");
 		$key = count(self::$_post);
 		self::$_post[$key]["url"] = $url;
-		self::$_post[$key]["controller"] = $controller;
+		self::$_post[$key]["controller"] = self::$_namespace.$controller;
 		self::$_post[$key]["middleware"] = self::$_middleware;
 	}
 
@@ -71,10 +71,15 @@ class Route
 		$return = new \stdClass();
 		foreach (self::$_get as $key => $value) {
 			if ( preg_match( '~^'.$value['url'].'$~i', $uri, $params ) ) {
-		        $arr = explode("@", $value["controller"]);
-				$arr[0] = "app\\controllers\\".$arr[0];
-				$return->className = $arr[0];
-				$return->method = $arr[1];
+				if(is_string($value["controller"]))
+				{
+					$arr = explode("@", $value["controller"]);
+					$arr[0] = "app\\controllers\\".$arr[0];
+					$return->className = $arr[0];
+					$return->method = $arr[1];
+				}else{
+					$return->callback = $value["controller"];
+				}
 				$return->middleware = $value["middleware"];
 				if(!empty($params))
 					$return->param = $params;
@@ -89,10 +94,15 @@ class Route
 		$return = new \stdClass();
 		foreach (self::$_post as $key => $value) {
 			if($value['url'] == $uri){
-				$arr = explode("@", $value["controller"]);
-				$arr[0] = "app\\controllers\\".$arr[0];
-				$return->className = $arr[0];
-				$return->method = $arr[1];
+				if(is_string($value["controller"]))
+				{
+					$arr = explode("@", $value["controller"]);
+					$arr[0] = "app\\controllers\\".$arr[0];
+					$return->className = $arr[0];
+					$return->method = $arr[1];
+				}else{
+					$return->callback = $value["controller"];
+				}
 				$return->middleware = $value["middleware"];
 				break;
 			}

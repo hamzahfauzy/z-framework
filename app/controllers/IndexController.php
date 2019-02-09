@@ -14,7 +14,13 @@ class IndexController extends Controller
 
 	function index()
 	{
-		return $this->view->render("index");
+		$data = file_get_contents("http://eplanning.asahankab.go.id/API/v1/musrenbang/kelurahan/293");
+		$data = json_decode($data);
+		foreach($data as $row)
+		{
+			echo $row->Jenis_Usulan."<br>";
+		}
+		// return $this->view->render("index");
 	}
 
 	function posthandle(Request $request)
@@ -27,9 +33,10 @@ class IndexController extends Controller
 		echo "Hello World";
 	}
 
-	function user(User $id)
+	function user($id)
 	{
-		print_r($id);
+		$user = User::get();
+		return $this->view->render("detail")->with("users",$user);
 	}
 
 	function tryparam($param)

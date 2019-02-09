@@ -8,7 +8,7 @@ class Admin extends Middleware
 	
 	function __construct()
 	{
-		$condition = (Session::user()->level == "Admin");
+		$condition = isset(Session::user()->id); // == "Admin");
 		$redirect = "/";
 		parent::__construct($condition,$redirect);
 	}

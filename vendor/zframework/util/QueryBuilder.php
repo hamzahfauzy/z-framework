@@ -106,6 +106,20 @@ class QueryBuilder
     	    
 		return $this;
 	}
+	
+	function orderby($value)
+	{
+	    
+    	$this->sql .= " ORDER BY $value";
+		return $this;
+	}
+	
+	function setlimit($value)
+	{
+	    
+    	$this->sql .= " LIMIT $value";
+		return $this;
+	}
 
 	function run($type = false)
 	{
@@ -126,9 +140,11 @@ class QueryBuilder
 				return $return;
 			}
 		}
-		
-		$this->connection->query($this->sql);
-		$this->last_id = $this->is_insert ? $this->connection->insert_id : 0;
-		return $this->last_id == 0 ? true : $this->last_id; //$this->connection;
+		if(!empty($this->sql))
+		{
+			$this->connection->query($this->sql);
+			$this->last_id = $this->is_insert ? $this->connection->insert_id : 0;
+			return $this->last_id == 0 ? true : $this->last_id; //$this->connection;
+		}
 	}
 }

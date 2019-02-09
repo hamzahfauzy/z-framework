@@ -7,6 +7,8 @@ class Model
 	public static $_tbl;
 	public static $_fields;
 	public static $QueryBuilder;
+	public static $_orderby = "";
+	public static $_limit = "";
 	public static $where_clause = [];
 	public static $or_where_clause = [];
 
@@ -67,9 +69,32 @@ class Model
 			    }
 			}
 		}
+		if(self::$_orderby != "")
+		{
+		    self::$QueryBuilder->orderby(self::$_orderby);
+		}
+		
+		if(self::$_limit != "")
+		{
+		    self::$QueryBuilder->setlimit(self::$_limit);
+		}
 		self::$where_clause = [];
 		self::$or_where_clause = [];
-		return self::$QueryBuilder->run();
+		self::$_orderby = "";
+		self::$_limit = "";
+		$data = self::$QueryBuilder->run();
+		if(empty($data))
+			return $data;
+		$modelName = get_called_class();
+		$model = [];
+		foreach ($data as $key => $value) {
+			$model[$key] = new $modelName;
+			foreach ($value as $k => $val) {
+				$model[$key]->{$k} = $val;
+			}
+		}
+
+		return $model;
 	}
 
 	public static function first()
@@ -104,8 +129,30 @@ class Model
 			    }
 			}
 		}
+		if(self::$_orderby != "")
+		{
+		    self::$QueryBuilder->orderby(self::$_orderby);
+		}
+		
+		if(self::$_limit != "")
+		{
+		    self::$QueryBuilder->limit(self::$_limit);
+		}
 		self::$where_clause = [];
-		return self::$QueryBuilder->run(1);
+		self::$or_where_clause = [];
+		self::$_orderby = "";
+		self::$_limit = "";
+
+		$data = self::$QueryBuilder->run(1);
+		if(empty($data))
+			return $data;
+		$modelName = get_called_class();
+		$model = new $modelName();
+		foreach ($data as $key => $value) {
+			$model->{$key} = $value;
+		}
+
+		return $model;
 	}
 
 	public static function last_id()
@@ -141,6 +188,52 @@ class Model
 		// 	self::$QueryBuilder->select(self::$_tbl);
 		// self::$QueryBuilder->where($clause1, $clause2);
 		return new static;
+	}
+	
+	public static function orderby($clause, $sort = "asc")
+	{
+	   // self::init();
+	   
+		self::$_orderby = " $clause $sort";
+		
+		// if(!self::$QueryBuilder->is_select)
+		// 	self::$QueryBuilder->select(self::$_tbl);
+		// self::$QueryBuilder->where($clause1, $clause2);
+		return new static;
+	}
+	
+	public static function limit($number_rows)
+	{
+	   // self::init();
+	   
+		self::$_limit = $number_rows;
+		
+		// if(!self::$QueryBuilder->is_select)
+		// 	self::$QueryBuilder->select(self::$_tbl);
+		// self::$QueryBuilder->where($clause1, $clause2);
+		return new static;
+	}
+
+	public function hasOne($class, $criteria = array())
+	{
+		$model = new $class;
+		if($criteria){
+			foreach($criteria as $key => $value){
+				$model->where($key,$this->{$value});
+			}
+		}
+		return $model->first();
+	}
+
+	public function hasMany($class, $criteria = array())
+	{
+		$model = new $class;
+		if($criteria){
+			foreach($criteria as $key => $value){
+				$model->where($key,$this->{$value});
+			}
+		}
+		return $model->get();
 	}
 
 	public static function delete($id)

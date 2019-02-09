@@ -1,17 +1,17 @@
 <?php
 use vendor\zframework\Route;
+use app\User;
 
 Route::get("/","IndexController@index");
-
-Route::prefix("/admin")->middleware("Admin")->namespaces("Admin")->group(function(){
-	Route::get("/","IndexController@index");
+Route::get("/show/{id}","IndexController@user");
+Route::get("/hello/{username}/{password}",function($username,$password){ 
+	$user = User::where('username',$username)->where('password',$password)->first();
+	if(empty($user))
+	{
+		echo "Not Found";
+	}
+	else
+	{
+		print_r($user);
+	}
 });
-
-Route::get("/hello","IndexController@hello");
-Route::get("/tryparam/{param}","IndexController@tryparam");
-Route::get("/user/{id}","IndexController@user");
-Route::post("/posthandle","IndexController@posthandle");
-Route::get("/login","IndexController@login");
-Route::get("/register","IndexController@register");
-Route::get("/logout","IndexController@logout");
-
