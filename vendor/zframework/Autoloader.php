@@ -113,9 +113,13 @@ class Autoloader
 				new $middleware;
 			}
 			if(!empty((array)$Route)):
-				$class = new $Route->className;
-				$request = new Request;
-				$class->{$Route->method}($request);
+				if(isset($Route->callback)){
+					call_user_func($Route->callback);
+				}else{
+					$request = new Request;
+					$class = new $Route->className;
+					$class->{$Route->method}($request);
+				}
 				$error = false;
 			endif;
 		endif;

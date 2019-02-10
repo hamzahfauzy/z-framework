@@ -62,7 +62,7 @@ class Route
 		if($url != "/") $url = rtrim($url,"/");
 		$key = count(self::$_post);
 		self::$_post[$key]["url"] = $url;
-		self::$_post[$key]["controller"] = self::$_namespace.$controller;
+		self::$_post[$key]["controller"] = is_string($controller) ? self::$_namespace.$controller : $controller;
 		self::$_post[$key]["middleware"] = self::$_middleware;
 	}
 
