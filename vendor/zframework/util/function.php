@@ -16,3 +16,8 @@ function isSecure() {
     (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
     || $_SERVER['SERVER_PORT'] == 443;
 }
+
+function old($key)
+{
+	return isset($_SESSION["old"][$key]) ? $_SESSION["old"][$key] : "";
+}

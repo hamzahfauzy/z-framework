@@ -21,6 +21,11 @@ class Session
 		$_SESSION[$key] = $value;
 	}
 
+	public static function reset($key)
+	{
+		unset($_SESSION[$key]);
+	}
+
 	public static function get($key)
 	{
 		return isset($_SESSION[$key]) ? $_SESSION[$key] : false;
@@ -33,7 +38,7 @@ class Session
 			return false;
 		}
 		$userclass = new self::$usersclass;
-		return $userclass->find(self::get(self::$user_session_key));
+		return $userclass->where(self::$user_session_key,self::get(self::$user_session_key))->first();
 	}
 
 }

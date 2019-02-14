@@ -18,6 +18,8 @@ class View
 		{
 			extract($this->data);
 			require '../views/'.$this->file.'.php';
+			if(Session::get('old'))
+				$_SESSION['old']['used'] = true;
 		}
 	}
 

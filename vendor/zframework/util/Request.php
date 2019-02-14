@@ -8,6 +8,8 @@ class Request
 	{
 		foreach ($_REQUEST as $key => $value) {
 			$this->{$key} = $value;
+			$_SESSION["old"][$key] = $value;
 		}
+		$_SESSION['old']['used'] = false;
 	}
 }

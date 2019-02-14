@@ -6,15 +6,21 @@ use vendor\zframework\util\Request;
 
 class Autoloader
 {
+
 	function __construct()
 	{
 		ini_set("display_errors",1);
+
+		Session::init();
 
 		require("../config/Path.php");
 		require("../config/Routes.php");
 		require("../vendor/zframework/util/function.php");
 
-		Session::init();
+		if(old('used'))
+		{
+			Session::reset('old');
+		}
 
 		$uri = urldecode(
 			parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
