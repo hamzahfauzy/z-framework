@@ -165,7 +165,16 @@ class Model
 	{
 		self::init();
 		$PrimaryKey = self::getPrimaryKey();
-		return self::$QueryBuilder->select(self::$_tbl)->where($PrimaryKey,$id)->run(1);
+		$data = self::$QueryBuilder->select(self::$_tbl)->where($PrimaryKey,$id)->run(1);;
+		if(empty($data))
+			return $data;
+		$modelName = get_called_class();
+		$model = new $modelName();
+		foreach ($data as $key => $value) {
+			$model->{$key} = $value;
+		}
+
+		return $model;
 	}
 
 	public static function where($clause1, $clause2, $clause3 = false)
