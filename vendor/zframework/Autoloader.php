@@ -54,7 +54,11 @@ class Autoloader
 						$params = $r->getParameters();
 						foreach ($params as $key => $value) {
 							$_param[$value->name]["name"] = $value->name;
-							$_param[$value->name]["type"] = $value->getType();
+							if(method_exists($value,"getType")){
+								$_param[$value->name]["type"] = $value->getType();
+							}else{
+								$_param[$value->name]["type"] = $value->getClass();
+							}
 						}
 										
 						$output = "";
