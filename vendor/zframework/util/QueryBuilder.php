@@ -123,7 +123,6 @@ class QueryBuilder
 
 	function run($type = false)
 	{
-	   // echo $this->sql;
 		if($this->is_select)
 		{
 			$rows = $this->connection->query($this->sql);

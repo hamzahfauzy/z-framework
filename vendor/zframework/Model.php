@@ -9,8 +9,7 @@ class Model
 	public static $QueryBuilder;
 	public static $_orderby = "";
 	public static $_limit = "";
-	public static $where_clause = [];
-	public static $or_where_clause = [];
+	public static $where_queue = [];
 
 	function __construct()
 	{
@@ -40,33 +39,32 @@ class Model
 	{
 		self::init();
 		self::$QueryBuilder->select(self::$_tbl);
-// 		print_r(self::$where_clause);
-		if(count(self::$where_clause))
+		if(count(self::$where_queue))
 		{
-			foreach (self::$where_clause as $key => $value) {
-			    
-				if(is_array($value))
-			    {
-			        self::$QueryBuilder->where($key,$value[0],$value[1]);
-			    }
-			    else
-			    {
-			        self::$QueryBuilder->where($key,$value);
-			    }
-			}
-		}
-		if(count(self::$or_where_clause))
-		{
-			foreach (self::$or_where_clause as $key => $value) {
-			    
-				if(is_array($value))
-			    {
-			        self::$QueryBuilder->orwhere($key,$value[0],$value[1]);
-			    }
-			    else
-			    {
-			        self::$QueryBuilder->orwhere($key,$value);
-			    }
+			foreach (self::$where_queue as $key => $value) {
+				if($value['type'] == "AND")
+				{
+					if(is_array($value['value']))
+				    {
+				        self::$QueryBuilder->where($value['key'],$value['value'][0],$value['value'][1]);
+				    }
+				    else
+				    {
+				        self::$QueryBuilder->where($value['key'],$value['value']);
+				    }
+				}
+
+				if($value['type'] == "OR")
+				{
+					if(is_array($value['value']))
+				    {
+				        self::$QueryBuilder->orwhere($value['key'],$value['value'][0],$value['value'][1]);
+				    }
+				    else
+				    {
+				        self::$QueryBuilder->orwhere($value['key'],$value['value']);
+				    }
+				}
 			}
 		}
 		if(self::$_orderby != "")
@@ -78,8 +76,7 @@ class Model
 		{
 		    self::$QueryBuilder->setlimit(self::$_limit);
 		}
-		self::$where_clause = [];
-		self::$or_where_clause = [];
+		self::$where_queue = [];
 		self::$_orderby = "";
 		self::$_limit = "";
 		$data = self::$QueryBuilder->run();
@@ -101,32 +98,32 @@ class Model
 	{
 		self::init();
 		self::$QueryBuilder->select(self::$_tbl);
-		if(count(self::$where_clause))
+		if(count(self::$where_queue))
 		{
-			foreach (self::$where_clause as $key => $value) {
-			    if(is_array($value))
-			    {
-			        self::$QueryBuilder->where($key,$value[0],$value[1]);
-			    }
-			    else
-			    {
-			        self::$QueryBuilder->where($key,$value);
-			    }
-				
-			}
-		}
-		if(count(self::$or_where_clause))
-		{
-			foreach (self::$or_where_clause as $key => $value) {
-			    
-				if(is_array($value))
-			    {
-			        self::$QueryBuilder->orwhere($key,$value[0],$value[1]);
-			    }
-			    else
-			    {
-			        self::$QueryBuilder->orwhere($key,$value);
-			    }
+			foreach (self::$where_queue as $key => $value) {
+				if($value['type'] == "AND")
+				{
+					if(is_array($value['value']))
+				    {
+				        self::$QueryBuilder->where($value['key'],$value['value'][0],$value['value'][1]);
+				    }
+				    else
+				    {
+				        self::$QueryBuilder->where($value['key'],$value['value']);
+				    }
+				}
+
+				if($value['type'] == "OR")
+				{
+					if(is_array($value['value']))
+				    {
+				        self::$QueryBuilder->orwhere($value['key'],$value['value'][0],$value['value'][1]);
+				    }
+				    else
+				    {
+				        self::$QueryBuilder->orwhere($value['key'],$value['value']);
+				    }
+				}
 			}
 		}
 		if(self::$_orderby != "")
@@ -138,8 +135,7 @@ class Model
 		{
 		    self::$QueryBuilder->limit(self::$_limit);
 		}
-		self::$where_clause = [];
-		self::$or_where_clause = [];
+		self::$where_queue = [];
 		self::$_orderby = "";
 		self::$_limit = "";
 
@@ -180,7 +176,11 @@ class Model
 	public static function where($clause1, $clause2, $clause3 = false)
 	{
 	   // self::init();
-		self::$where_clause[$clause1] = $clause3==false ? $clause2 : [$clause2, $clause3];
+		self::$where_queue[] = [
+			"type" => "AND",
+			"key" => $clause1,
+			"value" => $clause3==false ? $clause2 : [$clause2, $clause3]
+		];
 		
 		// if(!self::$QueryBuilder->is_select)
 		// 	self::$QueryBuilder->select(self::$_tbl);
@@ -191,7 +191,11 @@ class Model
 	public static function orwhere($clause1, $clause2, $clause3 = false)
 	{
 	   // self::init();
-		self::$or_where_clause[$clause1] = $clause3==false ? $clause2 : [$clause2, $clause3];
+		self::$where_queue[] = [
+			"type" => "OR",
+			"key" => $clause1,
+			"value" => $clause3==false ? $clause2 : [$clause2, $clause3]
+		];
 		
 		// if(!self::$QueryBuilder->is_select)
 		// 	self::$QueryBuilder->select(self::$_tbl);
