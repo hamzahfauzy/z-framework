@@ -1,0 +1,28 @@
+	{
+		"action": "create",
+		"table_name" : "users",
+		"fields" : [
+			{
+				"name":"id",
+				"data_type":"int",
+				"length":11,
+				"default":"auto_increment"
+			},
+			{
+				"name":"username",
+				"data_type":"varchar",
+				"length":255
+			},
+			{
+				"name":"password",
+				"data_type":"varchar",
+				"length":255
+			},
+			{
+				"name":"level",
+				"data_type":"varchar",
+				"length":255
+			}
+		],
+		"primary_key" : "id"
+	}

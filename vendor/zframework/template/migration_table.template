@@ -1,0 +1,23 @@
+	{
+		"action": "{{action}}",
+		"table_name" : "{{tablename}}",
+		"fields" : [
+			{
+				"name":"id",
+				"data_type":"int",
+				"length":11,
+				"default":"auto_increment"
+			},
+			{
+				"name":"created_at",
+				"data_type":"timestamp",
+				"default":"CURRENT_TIMESTAMP"
+			},
+			{
+				"name":"updated_at",
+				"data_type":"timestamp",
+				"default":"CURRENT_TIMESTAMP"
+			}
+		],
+		"primary_key" : "id"
+	}
