@@ -32,7 +32,7 @@ class Generator
 		$file_template = str_replace("{{modelname}}", ucwords($param['model_name']), $file_template);
 		$file_template = str_replace("{{tablename}}", $param['table_name'], $file_template);
 		$file_template = str_replace("{{fields}}", $fields, $file_template);
-		file_put_contents("app/".ucwords($param['table_name']).".php", $file_template);
+		file_put_contents("app/".$param['model_name'].".php", $file_template);
 	}
 
 	function generateMigration($param)
@@ -83,5 +83,36 @@ class Generator
 		$file_template = iconv("CP1257","UTF-8", $file_template);
 		$file_template = str_replace("{{middlewarename}}", $middleware_name, $file_template);
 		file_put_contents("app/middleware/".$middleware_name.".php", $file_template);
+	}
+
+	function authGenerator()
+	{
+		mkdir("views/auth");
+		mkdir("app/controllers/Auth");
+
+		$file_template = file_get_contents("vendor/zframework/template/auth_middleware.template");
+		if(!file_exists("app/middleware/Auth.php"))
+			file_put_contents("app/middleware/Auth.php", $file_template);
+
+		$file_template = file_get_contents("vendor/zframework/template/authcontroller.template.php");
+		if(!file_exists("app/controllers/Auth/AuthController.php"))
+			file_put_contents("app/controllers/Auth/AuthController.php", $file_template);
+
+		$file_template = file_get_contents("vendor/zframework/template/auth/login.template.php");
+		if(!file_exists("views/auth/login.php"))
+			file_put_contents("views/auth/login.php", $file_template);
+
+		$file_template = file_get_contents("vendor/zframework/template/auth/register.template.php");
+		if(!file_exists("views/auth/register.php"))
+			file_put_contents("views/auth/register.php", $file_template);
+
+		$lines = file("config/Routes.php");
+		$num = count($lines)+1;
+		$lines[1] = "use vendor\\zframework\\Auth;\n" . $lines[1]; // prepend content to line 2.
+		$lines[$num] = "\nAuth::routes(); \n";
+		$lines[$num+2] = "\nRoute::get('/home',function(){
+			echo 'Welcome Home';
+		}); \n";
+		file_put_contents("config/Routes.php", implode('', $lines));
 	}
 }

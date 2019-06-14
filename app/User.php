@@ -9,12 +9,7 @@ class User extends Model
 	static $table = "users";
 	static $fields = ["id","username","password","level"];
 
-	function getUserMeta()
-	{
-		return $this->hasOne(UserMeta::class, ["user_id"=>"id"]);
-	}
-
-	function getPosts()
+	function posts()
 	{
 		return $this->hasMany(Post::class, ["user_id"=>"id"]);
 	}

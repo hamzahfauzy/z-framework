@@ -35,12 +35,10 @@
 				"field_name":"id",
 				"references":"user",
 				"references_field":"id",
-				"event":[
-					{
-						"delete":"cascade",
-						"update":"no action"
-					}
-				]
+				"event":{
+					"delete":"cascade",
+					"update":"no action"
+				}
 			}
 		]
 	}

@@ -275,6 +275,13 @@ if($command == "tools")
 			]);
 			echo "Generate Seeder : ".$seeder_name." Succeded\n";
 		}
+
+		if($command_parameter == "create:auth")
+		{
+			$generator = new Generator("");
+			$generator->authGenerator();
+			echo "Generate Auth Succeded\n";
+		}
 	}
 
 	die();
