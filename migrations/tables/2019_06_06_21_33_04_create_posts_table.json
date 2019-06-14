@@ -1,0 +1,48 @@
+	{
+		"action": "create",
+		"table_name" : "posts",
+		"fields" : [
+			{
+				"name":"id",
+				"data_type":"int",
+				"length":11,
+				"default":"auto_increment"
+			},
+			{
+				"name":"user_id",
+				"data_type":"int",
+				"length":11
+			},
+			{
+				"name":"post_title",
+				"data_type":"varchar",
+				"length":255
+			},
+			{
+				"name":"post_content",
+				"data_type":"text"
+			},
+			{
+				"name":"created_at",
+				"data_type":"timestamp",
+				"default":"CURRENT_TIMESTAMP"
+			},
+			{
+				"name":"updated_at",
+				"data_type":"timestamp",
+				"default":"CURRENT_TIMESTAMP"
+			}
+		],
+		"primary_key" : "id",
+		"foreign_key" : [
+			{
+				"field_name":"user_id",
+				"references":"users",
+				"references_field":"id",
+				"event":{
+					"delete":"cascade",
+					"update":"no action"
+				}
+			}
+		]
+	}

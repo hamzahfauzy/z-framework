@@ -1,0 +1,14 @@
+<?php
+namespace app\controllers{{namespace}};
+use vendor\zframework\Controller;
+use vendor\zframework\Session;
+use vendor\zframework\util\Request;
+
+class {{controllername}} extends Controller
+{
+	function __construct()
+	{
+		parent::__construct();
+	}
+
+}

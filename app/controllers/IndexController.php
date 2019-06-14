@@ -14,33 +14,13 @@ class IndexController extends Controller
 
 	function index()
 	{
-		echo "Your Successfully install z-framework";
+		return $this->view->render('index');
 	}
 
-	function posthandle(Request $request)
+	function home()
 	{
-		print_r($request);
+		$users = User::get();
+		return $this->view->render('home')->with('users',$users);
 	}
 
-	function hello()
-	{
-		echo "Hello World";
-	}
-
-	function user($id)
-	{
-		$user = User::get();
-		return $this->view->render("detail")->with("users",$user);
-	}
-
-	function tryparam($param)
-	{
-		echo $param;
-	}
-
-	function logout()
-	{
-		Session::destroy();
-		$this->redirect()->url("/");
-	}
 }

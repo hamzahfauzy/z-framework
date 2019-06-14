@@ -235,7 +235,10 @@ class Model
 				$model->where($key,$this->{$value});
 			}
 		}
-		return $model->first();
+		$data = $model->first();
+		$method = debug_backtrace()[1]['function'];
+		debug_backtrace()[0]['object']->{$method} = $data;
+		return $data;
 	}
 
 	public function hasMany($class, $criteria = array())
@@ -246,7 +249,10 @@ class Model
 				$model->where($key,$this->{$value});
 			}
 		}
-		return $model->get();
+		$data = $model->get();
+		$method = debug_backtrace()[1]['function'];
+		debug_backtrace()[0]['object']->{$method} = $data;
+		return $data;
 	}
 
 	public static function delete($id)

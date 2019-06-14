@@ -1,0 +1,10 @@
+<?php
+namespace app;
+use vendor\zframework\Model;
+
+class {{modelname}} extends Model
+{
+	static $table = "{{tablename}}";
+	static $fields = [{{fields}}];
+
+}

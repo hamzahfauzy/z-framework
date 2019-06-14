@@ -1,0 +1,60 @@
+// create query
+[
+	{
+		"action": "create",
+		"table_name" : "users",
+		"fields" : [
+			{
+				"name":"id",
+				"data_type":"int",
+				"length":11,
+				"default":"auto_increment"
+			},
+			{
+				"name":"username",
+				"data_type":"varchar",
+				"length":255
+			},
+			{
+				"name":"password",
+				"data_type":"varchar",
+				"length":255
+			},
+			{
+				"name":"date",
+				"data_type":"date"
+			},
+			{
+				"name":"created_at",
+				"data_type":"datetime"
+			}
+		],
+		"primary_key" : "id",
+		"foreign_key" : [
+			{
+				"field_name":"id",
+				"references":"user",
+				"references_field":"id",
+				"event":{
+					"delete":"cascade",
+					"update":"no action"
+				}
+			}
+		]
+	}
+]
+
+// add column
+[
+	{
+		"action": "add column",
+		"table_name" : "users",
+		"fields" : [
+			{
+				"name":"level",
+				"data_type":"varchar",
+				"length":255
+			}
+		]
+	}
+]
