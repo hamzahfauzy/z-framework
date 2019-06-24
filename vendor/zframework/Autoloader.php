@@ -67,17 +67,34 @@ class Autoloader
 								$output .= "Parameter ".$k." Doesn't Exists<br>";
 							else
 							{
-								if(strcmp($_param[$k]["type"],"app\\") > -1)
-								{
-									$type = $_param[$k]["type"];
-									$type = str_replace("\\", "/", $type);
-									$type = str_replace("/", "\\", $type);
-									$obj = new $type;
-									$obj = $obj->findParam($k, $val, $type);
-									$param[$k] = $obj;
-								}else{
-									$param[$k] = $val;
-								}
+							    if (version_compare(PHP_VERSION, '7.0.0', '>=')) {
+                                    if(strcmp($_param[$k]["type"],"app\\") > -1)
+    								{
+    									$type = $_param[$k]["type"];
+    									$type = str_replace("\\", "/", $type);
+    									$type = str_replace("/", "\\", $type);
+    									$obj = new $type;
+    									$obj = $obj->findParam($k, $val, $type);
+    									$param[$k] = $obj;
+    								}else{
+    									$param[$k] = $val;
+    								}
+                                }
+                                else
+                                {
+                                    if(strcmp($_param[$k]["type"]->name,"app\\") > -1)
+    								{
+    									$type = $_param[$k]["type"]->name;
+    									$type = str_replace("\\", "/", $type);
+    									$type = str_replace("/", "\\", $type);
+    									$obj = new $type;
+    									$obj = $obj->findParam($k, $val, $type);
+    									$param[$k] = $obj;
+    								}else{
+    									$param[$k] = $val;
+    								}
+                                }
+								
 							}
 						}
 						
